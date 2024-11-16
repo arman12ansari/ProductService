@@ -135,6 +135,21 @@ public class FakeStoreProductService implements ProductService {
         return convertFakeStoreProductToProduct(response);
     }
 
+    @Override
+    public Product deleteProduct(Long id) throws ProductNotExistsException {
+        RequestCallback requestCallback = restTemplate.httpEntityCallback(null, FakeStoreProductDto.class);
+        HttpMessageConverterExtractor<FakeStoreProductDto> responseExtractor =
+                new HttpMessageConverterExtractor<>(FakeStoreProductDto.class, restTemplate.getMessageConverters());
+        FakeStoreProductDto response =
+                restTemplate.execute("https://fakestoreapi.com/products/" + id, HttpMethod.DELETE, requestCallback, responseExtractor);
+
+        if (response == null) {
+            throw new ProductNotExistsException("Product with id " + id + " does not exist");
+        }
+
+        return convertFakeStoreProductToProduct(response);
+    }
+
     private Product convertFakeStoreProductToProduct(FakeStoreProductDto fakeStoreProductDto) {
         Product product = new Product();
 
