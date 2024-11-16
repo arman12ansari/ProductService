@@ -118,11 +118,25 @@ public class FakeStoreProductService implements ProductService {
     private ProductRequestDto convertProductToProductRequestDto(Product product) {
         ProductRequestDto productRequestDto = new ProductRequestDto();
 
-        productRequestDto.setTitle(product.getTitle());
-        productRequestDto.setPrice(product.getPrice());
-        productRequestDto.setDescription(product.getDescription());
-        productRequestDto.setImage(product.getImageUrl());
-        productRequestDto.setCategory(product.getCategory().getName());
+        if(product.getTitle() != null) {
+            productRequestDto.setTitle(product.getTitle());
+        }
+
+        if(product.getPrice() != 0) {
+            productRequestDto.setPrice(product.getPrice());
+        }
+
+        if(product.getDescription() != null) {
+            productRequestDto.setDescription(product.getDescription());
+        }
+
+        if(product.getImageUrl() != null) {
+            productRequestDto.setImage(product.getImageUrl());
+        }
+
+        if(product.getCategory().getName() != null) {
+            productRequestDto.setCategory(product.getCategory().getName());
+        }
 
         return productRequestDto;
     }
