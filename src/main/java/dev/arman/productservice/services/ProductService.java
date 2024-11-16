@@ -15,4 +15,6 @@ public interface ProductService {
     List<Product> getAllProducts() throws ProductNotExistsException;
 
     List<Product> getProductsByCategory(String category) throws CategoryNotExistsException;
+
+    List<String> getAllCategories() throws CategoryNotExistsException;
 }

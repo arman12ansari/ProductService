@@ -42,7 +42,7 @@ public class FakeStoreProductService implements ProductService {
         FakeStoreProductDto[] response =
                 restTemplate.getForObject("https://fakestoreapi.com/products", FakeStoreProductDto[].class);
 
-        if (response != null && response.length == 0) {
+        if (response == null || response.length == 0) {
             throw new ProductNotExistsException("No products found");
         }
 
@@ -60,7 +60,7 @@ public class FakeStoreProductService implements ProductService {
         FakeStoreProductDto[] response =
                 restTemplate.getForObject("https://fakestoreapi.com/products/category/" + category, FakeStoreProductDto[].class);
 
-        if (response != null && response.length == 0) {
+        if (response == null || response.length == 0) {
             throw new CategoryNotExistsException("Category " + category + " does not exist");
         }
 
@@ -71,6 +71,18 @@ public class FakeStoreProductService implements ProductService {
         }
 
         return products;
+    }
+
+    @Override
+    public List<String> getAllCategories() throws CategoryNotExistsException {
+        String[] response =
+                restTemplate.getForObject("https://fakestoreapi.com/products/categories", String[].class);
+
+        if (response == null || response.length == 0) {
+            throw new CategoryNotExistsException("No categories found");
+        }
+
+        return List.of(response);
     }
 
     private Product convertFakeStoreProductToProduct(FakeStoreProductDto fakeStoreProductDto) {

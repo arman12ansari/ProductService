@@ -41,4 +41,9 @@ public class ProductController {
     public ResponseEntity<List<Product>> getProductByCategory(@PathVariable("categoryName") String categoryName) throws CategoryNotExistsException {
         return new ResponseEntity<>(productService.getProductsByCategory(categoryName), HttpStatus.OK);
     }
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<String>> getAllCategories() throws CategoryNotExistsException {
+        return new ResponseEntity<>(productService.getAllCategories(), HttpStatus.OK);
+    }
 }
