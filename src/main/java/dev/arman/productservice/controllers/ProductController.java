@@ -54,4 +54,9 @@ public class ProductController {
     public ResponseEntity<Product> updateProduct(@PathVariable("id") Long id, @RequestBody Product product) throws ProductNotExistsException {
         return new ResponseEntity<>(productService.updateProduct(id, product), HttpStatus.OK);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> replaceProduct(@PathVariable("id") Long id, @RequestBody Product product) throws ProductNotExistsException {
+        return new ResponseEntity<>(productService.replaceProduct(id, product), HttpStatus.OK);
+    }
 }

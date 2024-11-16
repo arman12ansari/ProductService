@@ -22,4 +22,6 @@ public interface ProductService {
     Product addProduct(Product product) throws UnableToAddProductException;
 
     Product updateProduct(Long id, Product product) throws ProductNotExistsException;
+
+    Product replaceProduct(Long id, Product product) throws ProductNotExistsException;
 }

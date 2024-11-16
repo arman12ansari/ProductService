@@ -8,7 +8,10 @@ import dev.arman.productservice.exceptions.UnableToAddProductException;
 import dev.arman.productservice.models.Category;
 import dev.arman.productservice.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpMessageConverterExtractor;
+import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -115,6 +118,23 @@ public class FakeStoreProductService implements ProductService {
         return convertFakeStoreProductToProduct(response);
     }
 
+    @Override
+    public Product replaceProduct(Long id, Product product) throws ProductNotExistsException {
+        ProductRequestDto request = convertProductToProductRequestDto(product);
+
+        RequestCallback requestCallback = restTemplate.httpEntityCallback(request, FakeStoreProductDto.class);
+        HttpMessageConverterExtractor<FakeStoreProductDto> responseExtractor =
+                new HttpMessageConverterExtractor<>(FakeStoreProductDto.class, restTemplate.getMessageConverters());
+        FakeStoreProductDto response =
+                restTemplate.execute("https://fakestoreapi.com/products/" + id, HttpMethod.PUT, requestCallback, responseExtractor);
+
+        if (response == null) {
+            throw new ProductNotExistsException("Product with id " + id + " does not exist");
+        }
+
+        return convertFakeStoreProductToProduct(response);
+    }
+
     private Product convertFakeStoreProductToProduct(FakeStoreProductDto fakeStoreProductDto) {
         Product product = new Product();
 
@@ -132,23 +152,23 @@ public class FakeStoreProductService implements ProductService {
     private ProductRequestDto convertProductToProductRequestDto(Product product) {
         ProductRequestDto productRequestDto = new ProductRequestDto();
 
-        if(product.getTitle() != null) {
+        if (product.getTitle() != null) {
             productRequestDto.setTitle(product.getTitle());
         }
 
-        if(product.getPrice() != 0) {
+        if (product.getPrice() != 0) {
             productRequestDto.setPrice(product.getPrice());
         }
 
-        if(product.getDescription() != null) {
+        if (product.getDescription() != null) {
             productRequestDto.setDescription(product.getDescription());
         }
 
-        if(product.getImageUrl() != null) {
+        if (product.getImageUrl() != null) {
             productRequestDto.setImage(product.getImageUrl());
         }
 
-        if(product.getCategory()!=null && product.getCategory().getName() != null) {
+        if (product.getCategory() != null && product.getCategory().getName() != null) {
             productRequestDto.setCategory(product.getCategory().getName());
         }
 
