@@ -1,5 +1,6 @@
 package dev.arman.productservice.controllers;
 
+import dev.arman.productservice.exceptions.CategoryNotExistsException;
 import dev.arman.productservice.exceptions.ProductNotExistsException;
 import dev.arman.productservice.models.Product;
 import dev.arman.productservice.services.ProductService;
@@ -34,5 +35,10 @@ public class ProductController {
     @GetMapping()
     public ResponseEntity<List<Product>> getAllProducts() throws ProductNotExistsException {
         return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
+    }
+
+    @GetMapping("/category/{categoryName}")
+    public ResponseEntity<List<Product>> getProductByCategory(@PathVariable("categoryName") String categoryName) throws CategoryNotExistsException {
+        return new ResponseEntity<>(productService.getProductsByCategory(categoryName), HttpStatus.OK);
     }
 }

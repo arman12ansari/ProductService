@@ -1,6 +1,7 @@
 package dev.arman.productservice.services;
 
 import dev.arman.productservice.dtos.FakeStoreProductDto;
+import dev.arman.productservice.exceptions.CategoryNotExistsException;
 import dev.arman.productservice.exceptions.ProductNotExistsException;
 import dev.arman.productservice.models.Category;
 import dev.arman.productservice.models.Product;
@@ -41,8 +42,26 @@ public class FakeStoreProductService implements ProductService {
         FakeStoreProductDto[] response =
                 restTemplate.getForObject("https://fakestoreapi.com/products", FakeStoreProductDto[].class);
 
-        if (response == null) {
+        if (response != null && response.length == 0) {
             throw new ProductNotExistsException("No products found");
+        }
+
+        List<Product> products = new ArrayList<>();
+
+        for (FakeStoreProductDto fakeStoreProductDto : response) {
+            products.add(convertFakeStoreProductToProduct(fakeStoreProductDto));
+        }
+
+        return products;
+    }
+
+    @Override
+    public List<Product> getProductsByCategory(String category) throws CategoryNotExistsException {
+        FakeStoreProductDto[] response =
+                restTemplate.getForObject("https://fakestoreapi.com/products/category/" + category, FakeStoreProductDto[].class);
+
+        if (response != null && response.length == 0) {
+            throw new CategoryNotExistsException("Category " + category + " does not exist");
         }
 
         List<Product> products = new ArrayList<>();

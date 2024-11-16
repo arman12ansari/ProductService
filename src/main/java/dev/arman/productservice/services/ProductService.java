@@ -1,5 +1,6 @@
 package dev.arman.productservice.services;
 
+import dev.arman.productservice.exceptions.CategoryNotExistsException;
 import dev.arman.productservice.exceptions.ProductNotExistsException;
 import dev.arman.productservice.models.Product;
 
@@ -12,4 +13,6 @@ public interface ProductService {
     Product getSingleProduct(Long id) throws ProductNotExistsException;
 
     List<Product> getAllProducts() throws ProductNotExistsException;
+
+    List<Product> getProductsByCategory(String category) throws CategoryNotExistsException;
 }
