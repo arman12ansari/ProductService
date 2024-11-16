@@ -101,6 +101,20 @@ public class FakeStoreProductService implements ProductService {
         return convertFakeStoreProductToProduct(response);
     }
 
+    @Override
+    public Product updateProduct(Long id, Product product) throws ProductNotExistsException {
+        ProductRequestDto request = convertProductToProductRequestDto(product);
+
+        FakeStoreProductDto response =
+                restTemplate.patchForObject("https://fakestoreapi.com/products/" + id, request, FakeStoreProductDto.class);
+
+        if (response == null) {
+            throw new ProductNotExistsException("Product with id " + id + " does not exist");
+        }
+
+        return convertFakeStoreProductToProduct(response);
+    }
+
     private Product convertFakeStoreProductToProduct(FakeStoreProductDto fakeStoreProductDto) {
         Product product = new Product();
 
@@ -134,7 +148,7 @@ public class FakeStoreProductService implements ProductService {
             productRequestDto.setImage(product.getImageUrl());
         }
 
-        if(product.getCategory().getName() != null) {
+        if(product.getCategory()!=null && product.getCategory().getName() != null) {
             productRequestDto.setCategory(product.getCategory().getName());
         }
 

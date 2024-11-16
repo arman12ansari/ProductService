@@ -20,4 +20,6 @@ public interface ProductService {
     List<String> getAllCategories() throws CategoryNotExistsException;
 
     Product addProduct(Product product) throws UnableToAddProductException;
+
+    Product updateProduct(Long id, Product product) throws ProductNotExistsException;
 }

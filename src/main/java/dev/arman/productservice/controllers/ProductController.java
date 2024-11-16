@@ -49,4 +49,9 @@ public class ProductController {
     public ResponseEntity<Product> addProduct(@RequestBody Product product) throws UnableToAddProductException {
         return new ResponseEntity<>(productService.addProduct(product), HttpStatus.OK);
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable("id") Long id, @RequestBody Product product) throws ProductNotExistsException {
+        return new ResponseEntity<>(productService.updateProduct(id, product), HttpStatus.OK);
+    }
 }
