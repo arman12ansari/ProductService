@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author mdarmanansari
  */
@@ -31,6 +34,24 @@ public class FakeStoreProductService implements ProductService {
         }
 
         return convertFakeStoreProductToProduct(fakeStoreProductDto);
+    }
+
+    @Override
+    public List<Product> getAllProducts() throws ProductNotExistsException {
+        FakeStoreProductDto[] response =
+                restTemplate.getForObject("https://fakestoreapi.com/products", FakeStoreProductDto[].class);
+
+        if (response == null) {
+            throw new ProductNotExistsException("No products found");
+        }
+
+        List<Product> products = new ArrayList<>();
+
+        for (FakeStoreProductDto fakeStoreProductDto : response) {
+            products.add(convertFakeStoreProductToProduct(fakeStoreProductDto));
+        }
+
+        return products;
     }
 
     private Product convertFakeStoreProductToProduct(FakeStoreProductDto fakeStoreProductDto) {

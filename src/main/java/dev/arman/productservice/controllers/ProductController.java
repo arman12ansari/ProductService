@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * @author mdarmanansari
  */
@@ -27,5 +29,10 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<Product> getSingleProduct(@PathVariable("id") Long id) throws ProductNotExistsException {
         return new ResponseEntity<>(productService.getSingleProduct(id), HttpStatus.OK);
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<Product>> getAllProducts() throws ProductNotExistsException {
+        return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
     }
 }
