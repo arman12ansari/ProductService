@@ -1,8 +1,10 @@
 package dev.arman.productservice.services;
 
 import dev.arman.productservice.dtos.FakeStoreProductDto;
+import dev.arman.productservice.dtos.ProductRequestDto;
 import dev.arman.productservice.exceptions.CategoryNotExistsException;
 import dev.arman.productservice.exceptions.ProductNotExistsException;
+import dev.arman.productservice.exceptions.UnableToAddProductException;
 import dev.arman.productservice.models.Category;
 import dev.arman.productservice.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +87,20 @@ public class FakeStoreProductService implements ProductService {
         return List.of(response);
     }
 
+    @Override
+    public Product addProduct(Product product) throws UnableToAddProductException {
+        ProductRequestDto request = convertProductToProductRequestDto(product);
+
+        FakeStoreProductDto response =
+                restTemplate.postForObject("https://fakestoreapi.com/products", request, FakeStoreProductDto.class);
+
+        if (response == null) {
+            throw new UnableToAddProductException("Unable to add product");
+        }
+
+        return convertFakeStoreProductToProduct(response);
+    }
+
     private Product convertFakeStoreProductToProduct(FakeStoreProductDto fakeStoreProductDto) {
         Product product = new Product();
 
@@ -97,5 +113,17 @@ public class FakeStoreProductService implements ProductService {
         product.getCategory().setName(fakeStoreProductDto.getCategory());
 
         return product;
+    }
+
+    private ProductRequestDto convertProductToProductRequestDto(Product product) {
+        ProductRequestDto productRequestDto = new ProductRequestDto();
+
+        productRequestDto.setTitle(product.getTitle());
+        productRequestDto.setPrice(product.getPrice());
+        productRequestDto.setDescription(product.getDescription());
+        productRequestDto.setImage(product.getImageUrl());
+        productRequestDto.setCategory(product.getCategory().getName());
+
+        return productRequestDto;
     }
 }

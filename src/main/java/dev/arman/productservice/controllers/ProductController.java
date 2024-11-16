@@ -2,15 +2,13 @@ package dev.arman.productservice.controllers;
 
 import dev.arman.productservice.exceptions.CategoryNotExistsException;
 import dev.arman.productservice.exceptions.ProductNotExistsException;
+import dev.arman.productservice.exceptions.UnableToAddProductException;
 import dev.arman.productservice.models.Product;
 import dev.arman.productservice.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -45,5 +43,10 @@ public class ProductController {
     @GetMapping("/categories")
     public ResponseEntity<List<String>> getAllCategories() throws CategoryNotExistsException {
         return new ResponseEntity<>(productService.getAllCategories(), HttpStatus.OK);
+    }
+
+    @PostMapping()
+    public ResponseEntity<Product> addProduct(@RequestBody Product product) throws UnableToAddProductException {
+        return new ResponseEntity<>(productService.addProduct(product), HttpStatus.OK);
     }
 }

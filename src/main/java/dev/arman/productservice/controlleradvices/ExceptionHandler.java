@@ -3,6 +3,7 @@ package dev.arman.productservice.controlleradvices;
 import dev.arman.productservice.dtos.ExceptionDto;
 import dev.arman.productservice.exceptions.CategoryNotExistsException;
 import dev.arman.productservice.exceptions.ProductNotExistsException;
+import dev.arman.productservice.exceptions.UnableToAddProductException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -27,5 +28,13 @@ public class ExceptionHandler {
         exceptionDto.setMessage(exception.getMessage());
         exceptionDto.setDetails("Category not found");
         return new ResponseEntity<>(exceptionDto, HttpStatus.NOT_FOUND);
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(UnableToAddProductException.class)
+    public ResponseEntity<ExceptionDto> handleUnableToAddProductException(UnableToAddProductException exception) {
+        ExceptionDto exceptionDto = new ExceptionDto();
+        exceptionDto.setMessage(exception.getMessage());
+        exceptionDto.setDetails("Unable to add product");
+        return new ResponseEntity<>(exceptionDto, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
