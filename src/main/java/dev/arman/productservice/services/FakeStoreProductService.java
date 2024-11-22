@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * @author mdarmanansari
  */
-@Service
+@Service("fakeStoreProductService")
 public class FakeStoreProductService implements ProductService {
 
     private final RestTemplate restTemplate;
