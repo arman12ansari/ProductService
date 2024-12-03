@@ -8,6 +8,7 @@ import dev.arman.productservice.exceptions.UnableToAddProductException;
 import dev.arman.productservice.models.Category;
 import dev.arman.productservice.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpMessageConverterExtractor;
@@ -24,14 +25,22 @@ import java.util.List;
 public class FakeStoreProductService implements ProductService {
 
     private final RestTemplate restTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
-    public FakeStoreProductService(RestTemplate restTemplate) {
+    public FakeStoreProductService(RestTemplate restTemplate, RedisTemplate<String, Object> redisTemplate) {
         this.restTemplate = restTemplate;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
     public Product getSingleProduct(Long id) throws ProductNotExistsException {
+
+        Product product = (Product) redisTemplate.opsForHash().get("PRODUCTS", "PRODUCT_" + id);
+        if (product != null) {
+            return product;
+        }
+
         FakeStoreProductDto fakeStoreProductDto =
                 restTemplate.getForObject("https://fakestoreapi.com/products/" + id, FakeStoreProductDto.class);
 
@@ -39,7 +48,10 @@ public class FakeStoreProductService implements ProductService {
             throw new ProductNotExistsException("Product with id " + id + " does not exist");
         }
 
-        return convertFakeStoreProductToProduct(fakeStoreProductDto);
+        Product finalProduct = convertFakeStoreProductToProduct(fakeStoreProductDto);
+        redisTemplate.opsForHash().put("PRODUCTS", "PRODUCT_" + id, finalProduct);
+
+        return finalProduct;
     }
 
     @Override
